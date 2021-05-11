@@ -1,0 +1,4 @@
+G:\New256\CamelCase\1\LinuxCamelCase\obj\Debug\netcoreapp3.1\LinuxCamelCase.vbprojAssemblyReference.cache
+G:\New256\CamelCase\1\LinuxCamelCase\obj\Debug\netcoreapp3.1\LinuxCamelCase.AssemblyInfoInputs.cache
+G:\New256\CamelCase\1\LinuxCamelCase\obj\Debug\netcoreapp3.1\LinuxCamelCase.AssemblyInfo.vb
+G:\New256\CamelCase\1\LinuxCamelCase\obj\Debug\netcoreapp3.1\LinuxCamelCase.vbproj.CoreCompileInputs.cache

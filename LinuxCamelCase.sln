@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "LinuxCamelCase", "LinuxCamelCase\LinuxCamelCase.vbproj", "{01778E51-1904-4776-9CCD-958D19086010}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01778E51-1904-4776-9CCD-958D19086010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01778E51-1904-4776-9CCD-958D19086010}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01778E51-1904-4776-9CCD-958D19086010}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01778E51-1904-4776-9CCD-958D19086010}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BE52748D-1714-4094-9F4F-25043AC813A5}
+	EndGlobalSection
+EndGlobal
