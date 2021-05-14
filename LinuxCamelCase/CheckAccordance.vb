@@ -3,7 +3,7 @@
     Dim StartPage As String = ""
     Dim IsStartPageFound As Boolean = False
     Sub CheckAccordance()
-        CN.Open()
+        If CN.State <> Data.ConnectionState.Open Then CN.Open()
         ReadFileList4(Root)
         ReadDirList4(Root)
         CN.Close()
@@ -25,6 +25,7 @@
                 If StartPage = "" Then
                     ProcessingOneFile(OneFile)
                 Else
+                    'trigger StartPage
                     If Not IsStartPageFound And (Root & StartPage) = OneFile Then
                         IsStartPageFound = True
                         ProcessingOneFile(OneFile)
@@ -57,37 +58,14 @@
             End If
         End If
     End Sub
-
-
     Sub FileChecker(FileName As String)
-        Dim CheckResult As (Integer, String) = CheckIsLowerFileNameIsPresentInDb(FileName)
+        Dim CheckResult As (Integer, String) = CheckFileInDb(FileName)
         If CheckResult.Item1 = 0 Then
-            Console.WriteLine()
             Console.WriteLine("Error: " & FileName)
-            Console.WriteLine()
+            WriteError($"MySQLError file is nothing", FileName)
         Else
             Console.Write(CheckResult.Item1 & ",")
         End If
     End Sub
-
-    Function CheckIsLowerFileNameIsPresentInDb(RawFileName As String) As (Integer, String)
-        Dim CmdString As String = $"SELECT i, REPLACE(CONCAT(`Folder`, '{Spliter}', `FileName`),'{Root}','') as URL FROM vbnet.Files where LOWER(CONCAT(`Folder`, '{Spliter}', `FileName`))=LOWER('{RawFileName}');"
-        'Console.WriteLine(CmdString)
-        Dim CMD As New MySqlCommand(CmdString, CN)
-        Dim RDR As MySqlDataReader = CMD.ExecuteReader()
-        Dim Ret1 As String = ""
-        Dim Ind1 As Integer = 0
-        Dim Count As Integer = 0
-        While RDR.Read
-            Count += 1
-            Ret1 = RDR("URL")
-            Ind1 = RDR("i")
-            If Count > 1 Then
-                Console.WriteLine("Warning: " & RDR("i") & " : " & RDR("URL"))
-            End If
-        End While
-        RDR.Close()
-        Return (Ind1, Ret1.TrimStart(Spliter))
-    End Function
 
 End Module

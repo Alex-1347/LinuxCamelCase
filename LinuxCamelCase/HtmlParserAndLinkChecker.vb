@@ -97,13 +97,30 @@ Partial Module Program
     Function GetNewCorrectLinkFromDb(FileName As String, ClearSiteLink As String) As String
         If ClearSiteLink.StartsWith("http:") Then 'http://rzd.vb-net.com/Index.htm and similar
             Return ClearSiteLink
+        ElseIf ClearSiteLink.ToLower.Contains("selector/styles.css") Then
+            Return "/Selector/Styles.css"
+        ElseIf ClearSiteLink.ToLower.Contains("selector/csharp.css") Then
+            Return "/Selector/Csharp.css"
+        ElseIf ClearSiteLink.ToLower.Contains("ms-help://") Then
+            Return ClearSiteLink
+        ElseIf ClearSiteLink.ToLower.Contains("/Sql/Basic/") Or ClearSiteLink.ToLower.Contains("/Sql/Sql/") Or ClearSiteLink.ToLower.Contains("/Sql/Func/") Or ClearSiteLink.ToLower.Contains("/Sql/Access/") Or ClearSiteLink.ToLower.Contains("/Sql/Login/") Or ClearSiteLink.ToLower.Contains("/Sql/Performance/") Or ClearSiteLink.ToLower.Contains("/Sql/Reserved") Or ClearSiteLink.ToLower.Contains("/Sql/Search") Then
+            Return ClearSiteLink
+        ElseIf ClearSiteLink = "mailTo:ru.vbnet2000@yahoo.com" Then
+            Return "mailTo:spam@google.com"
+        ElseIf ClearSiteLink.ToLower.StartsWith("mailto:") Then
+            Return ClearSiteLink
+        ElseIf FileName.Contains("/Windows/Framework2007/") Then
+            Return ClearSiteLink
+        ElseIf FileName.Contains("/Standard/Rfc/") Then
+            Return ClearSiteLink
+        ElseIf FileName.Contains("/Dotnet/MSDN/") Then
+            Return ClearSiteLink
+        ElseIf FileName.Contains("/Dotnet/Relation/") Or FileName.Contains("/Dotnet/Tour/") Then
+            Return ClearSiteLink
         End If
         Select Case ClearSiteLink
             'replace well known broken link without DB
             Case "" : Return "" '<a href="#Write">
-            Case "mailTo:ru.vbnet2000@yahoo.com" : Return "mailTo:spam@google.com"
-            Case "../selector/Styles.css" : Return "/Selector/Styles.css"
-            Case "../selector/csharp.css" : Return "/Selector/Csharp.css"
             Case "/Mvc" : Return "/Mvc/Index.htm"
             Case "/asp2" : Return "/Asp2/Index.htm"
             Case "/dotnet" : Return "/Dotnet/Index.htm"
@@ -137,15 +154,20 @@ Partial Module Program
                     'up
                     Debug.Print($"                Up from {CurDepth.Count}: {FileName.Replace(Root, "")} : {ClearSiteLink} : {String.Join("+", CurDepth)}")
                     Dim UpFolderLink As String
-                    If ClearSiteLink.StartsWith("../") And Regex.Matches(ClearSiteLink, "../").Count = 1 Then
+                    If ClearSiteLink.StartsWith("../") Then
                         UpFolderLink = GetUpFolder(FileName, ClearSiteLink, CurDepth, 1)
-                    ElseIf ClearSiteLink.StartsWith("../../") And Regex.Matches(ClearSiteLink, "../").Count = 2 Then
+                    ElseIf ClearSiteLink.StartsWith("../../") Then
                         UpFolderLink = GetUpFolder(FileName, ClearSiteLink, CurDepth, 2)
-                    ElseIf ClearSiteLink.StartsWith("../../../") And Regex.Matches(ClearSiteLink, "../").Count = 3 Then
+                        WriteError("Up Link 2 in " & FileName, ClearSiteLink)
+                    ElseIf ClearSiteLink.StartsWith("../../../") Then
                         UpFolderLink = GetUpFolder(FileName, ClearSiteLink, CurDepth, 3)
+                        WriteError("Up Link 3 in " & FileName, ClearSiteLink)
+                    ElseIf ClearSiteLink.StartsWith("../../../../") Then
+                        UpFolderLink = GetUpFolder(FileName, ClearSiteLink, CurDepth, 4)
+                        WriteError("Up Link 4 in " & FileName, ClearSiteLink)
                     Else
                         'strong, repair it manually
-                        WriteError("UpDown Link in " & FileName, ClearSiteLink)
+                        WriteError("Up Link in " & FileName, ClearSiteLink)
                         Return ClearSiteLink
                     End If
                     Return GetLinkFromDb(FileName, UpFolderLink)
@@ -165,7 +187,7 @@ Partial Module Program
                         Return GetLinkFromDb(FileName, DownLink)
                     Else
                         'strong, repair it manually
-                        WriteError("UpDown Link in " & FileName, ClearSiteLink)
+                        WriteError("DownUp Link in " & FileName, ClearSiteLink)
                         Return ClearSiteLink
                     End If
                 End If
@@ -187,7 +209,7 @@ Partial Module Program
     End Function
 
     Function GetLinkFromDb(FileName As String, ClearSiteLink As String) As String
-        Dim DbRequest As (Integer, String) = CheckFileInDb(Root & ClearSiteLink)
+        Dim DbRequest As (Integer, String) = CheckLowerFileInDb(Root & ClearSiteLink)
         If DbRequest.Item1 = 0 Then
             'link not found - mark it as broken
             Console.WriteLine("-,")
@@ -208,7 +230,7 @@ Partial Module Program
         If Up = 1 And (CurDepth.Count = 0 Or CurDepth.Count = 1) Then
             Return ClearSiteLink.Replace("..", "")
         Else
-            Debug.Print($"*********")
+            Debug.Print($"UpLink,")
             Return ClearSiteLink
         End If
     End Function
