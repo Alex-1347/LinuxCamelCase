@@ -10,18 +10,18 @@ Partial Module Program
 
     Sub ParseOneFile(FileName As String, ByRef HTML As String)
         Dim HrefRegex = New Regex("<a\s.*?href=(?:'|"")([^'"">]+)(?:'|"")", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-        RecursiveProcessingOneInterhalLink(FileName, HTML, HrefRegex, LinkType.Href, 0)
+        RecursiveProcessingOneInternalLink(FileName, HTML, HrefRegex, LinkType.Href, 0)
         Dim LocationRegex = New Regex("location.href=(?:'|"")([^'"">]+)(?:'|"")", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-        RecursiveProcessingOneInterhalLink(FileName, HTML, LocationRegex, LinkType.Href, 0)
+        RecursiveProcessingOneInternalLink(FileName, HTML, LocationRegex, LinkType.Href, 0)
         Dim SrcRegex = New Regex("<img\s.*?src=(?:'|"")([^'"">]+)(?:'|"")", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-        RecursiveProcessingOneInterhalLink(FileName, HTML, SrcRegex, LinkType.Src, 0)
+        RecursiveProcessingOneInternalLink(FileName, HTML, SrcRegex, LinkType.Src, 0)
         Dim LinkRegex = New Regex("<link\s.*?href=(?:'|"")([^'"">]+)(?:'|"")", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-        RecursiveProcessingOneInterhalLink(FileName, HTML, LinkRegex, LinkType.Href, 0)
+        RecursiveProcessingOneInternalLink(FileName, HTML, LinkRegex, LinkType.Href, 0)
         Dim ScriptRegex = New Regex("<script\s.*?src=(?:'|"")([^'"">]+)(?:'|"")", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-        RecursiveProcessingOneInterhalLink(FileName, HTML, ScriptRegex, LinkType.Src, 0)
+        RecursiveProcessingOneInternalLink(FileName, HTML, ScriptRegex, LinkType.Src, 0)
     End Sub
 
-    Sub RecursiveProcessingOneInterhalLink(FileName As String, ByRef HTML As String, Regex As Regex, Type As LinkType, StartIndex As Integer)
+    Sub RecursiveProcessingOneInternalLink(FileName As String, ByRef HTML As String, Regex As Regex, Type As LinkType, StartIndex As Integer)
         Dim Links As MatchCollection = Regex.Matches(HTML)
         If StartIndex <= Links.Count - 1 Then
             If Links(StartIndex).Value.ToLower.Contains("vb-net.com") And Not Links(StartIndex).Value.ToLower.Contains("forum.vb-net.com") And Not Links(StartIndex).Value.ToLower.Contains("products.vb-net.com") And Not Links(StartIndex).Value.ToLower.Contains("bug.vb-net.com") And Not Links(StartIndex).Value.ToLower.Contains("freeware.vb-net.com") Or
@@ -29,10 +29,10 @@ Partial Module Program
                 'processing internal link
                 'Debug.Print($"{StartIndex}: {Links(StartIndex).Index}:{Links(StartIndex).Value}")
                 ReplaceOneLink(FileName, HTML, Links(StartIndex).Index, Links(StartIndex).Value, Type)
-                RecursiveProcessingOneInterhalLink(FileName, HTML, Regex, Type, StartIndex + 1)
+                RecursiveProcessingOneInternalLink(FileName, HTML, Regex, Type, StartIndex + 1)
             Else
                 'look to next link
-                RecursiveProcessingOneInterhalLink(FileName, HTML, Regex, Type, StartIndex + 1)
+                RecursiveProcessingOneInternalLink(FileName, HTML, Regex, Type, StartIndex + 1)
             End If
         End If
     End Sub

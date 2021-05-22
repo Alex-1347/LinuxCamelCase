@@ -36,8 +36,10 @@ Partial Module Program
         Console.WriteLine("(9) - Set Up Correct Link, Start from selected file, for ex /EPPlus-Office-Open-XML/Index.htm")
         Console.WriteLine("(10)- Repair links, get correct links from DB")
         Console.WriteLine("(11)- Process one page")
-        Console.WriteLine("(12)- Get list of main wrong link")
-        Console.WriteLine("(13)- Get repair Insert commands")
+        Console.WriteLine("(12)- Special repair")
+        Console.WriteLine("(13)- Get list of main wrong link")
+        Console.WriteLine("(14)- Get repair Insert commands")
+        Console.WriteLine("(15)- LinkChecker")
 TryAgain:
         Dim Mode As String = Console.ReadLine()
         If IsNumeric(Mode) Then
@@ -81,8 +83,11 @@ ProcessNext:
                     ProcessOnePage(Console.ReadLine())
                     GoTo ProcessNext
                 Case 12
+                    Console.WriteLine("Get filter mask (like '/VS2010_NET4_TrainingKit/%js'):")
+                    SpecialRepair(Console.ReadLine())
+                Case 13
                     Console.WriteLine("SELECT * FROM `vbnet`.`FileError`")
-                    Console.WriteLine("where Name='Link not found in DB'")
+                    Console.WriteLine("where `Name`='Link not found in DB' and `LostFile` is NULL")
                     Console.WriteLine("and Message not like '/AspNet-DocAndSamples-2017%'")
                     Console.WriteLine("and Message not like '/Dotnet/%'")
                     Console.WriteLine("and Message not like '/Freebsd/%'")
@@ -97,11 +102,12 @@ ProcessNext:
                     Console.WriteLine("and Message not like '/Hosting/%'")
                     Console.WriteLine("and Message not like '/Flowers%'")
                     Console.WriteLine("and Message not like '/2/%'")
-                    Console.WriteLine("and Message not like '/VB2015/%'")
+                    Console.WriteLine("and Message not like '/Asp2/%'")
+                    Console.WriteLine("and Message not like '%/VB2015/%'")
                     Console.WriteLine("and Message not like '/Standard/%'")
-                    Console.WriteLine("and Message not like '%.js';")
+                    Console.WriteLine("and Message not like '%.js'")
                     Console.WriteLine("and Message not like '%.css';")
-                Case 13
+                Case 14
                     Console.WriteLine("Get index list (XX-YY) or one line XX:")
                     Dim Ids As String = Console.ReadLine()
                     If Ids.Contains("-") Then
@@ -116,6 +122,9 @@ ProcessNext:
                     If Console.ReadLine() = "Y" Then
                         GoTo RepairNext
                     End If
+                Case 15
+                    CN.Open()
+                    LinkCheck("/", "http://vb-net.com")
                 Case Else
                     Console.WriteLine("Try again:")
                     GoTo TryAgain

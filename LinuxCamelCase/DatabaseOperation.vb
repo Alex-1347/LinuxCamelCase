@@ -41,6 +41,38 @@
         End Try
     End Sub
 
+    Function CheckFileForMaskInDb(Mask As String, ProcessingLink As Func(Of String, String, String, Boolean)) As (Integer, String)
+        Dim Str1 As String = $"SELECT * FROM `vbnet`.`FileError` where `Name`='Link not found in DB' and `LostFile` is NULL and `Message` like '{Mask}';"
+        Dim CMD As MySqlCommand
+        Dim RDR As MySqlDataReader
+        Dim SuccessChange As New List(Of Integer)
+        Try
+            Dim CN1 As New MySqlConnection(ConnectionString)
+            CN1.Open()
+            CMD = New MySqlCommand(Str1, CN1)
+            RDR = CMD.ExecuteReader()
+            While RDR.Read
+                Dim I As Integer = RDR("i")
+                Dim CorrectLink As String = ""
+                If Not IsDBNull(RDR("CorrectLink")) Then
+                    CorrectLink = RDR("CorrectLink")
+                End If
+                Dim Arr1 As String() = RDR("Message").ToString.Split(" : ")
+                If ProcessingLink.Invoke(Arr1(0), Arr1(1), CorrectLink) Then
+                    SuccessChange.Add(I)
+                End If
+            End While
+            RDR.Close()
+            CN1.Close()
+            Console.WriteLine("Updated " & SuccessChange.Count & " record.")
+            SuccessChange.ForEach(Sub(X) DeleteRecord(X))
+        Catch ex As Exception
+            Console.WriteLine(Str1 & vbCrLf & ex.Message)
+            WriteError("MySQLError", Str1 & vbCrLf & ex.Message)
+        End Try
+    End Function
+
+
     Function GetOneWrongLink(Ind As Integer) As String
         Dim Str1 As String = $"SELECT `i`,`Message` FROM vbnet.FileError where Name='Link not found in DB' and I={Ind};"
         Dim CMD As MySqlCommand
@@ -83,9 +115,12 @@
     Sub DeleteRecord(I As Integer)
         Dim Str1 As String = $"DELETE FROM `vbnet`.`FileError` where I={I};"
         Dim CMD As MySqlCommand
+        Dim CN1 As New MySqlConnection(ConnectionString)
+        CN1.Open()
         Try
-            CMD = New MySqlCommand(Str1, CN)
+            CMD = New MySqlCommand(Str1, CN1)
             CMD.ExecuteNonQuery()
+            CN1.Close()
         Catch ex As Exception
             Console.WriteLine(I & vbCrLf & ex.Message)
             WriteError("MySQLError", Str1 & vbCrLf & ex.Message)
@@ -95,7 +130,7 @@
     Sub AddFileToDb(File As String)
         Dim FileName As String = IO.Path.GetFileName(File)
         Dim DirName As String = IO.Path.GetDirectoryName(File)
-        Dim Str2 As String = $"INSERT INTO `vbnet`.`Files`(`Folder`,`FileName`,`Date`,`Length`,`MD5`)VALUES('{DirName}','{FileName}',STR_TO_DATE('{Now.ToString("MM/dd/yyyy hh:mm:ss")}','%m/%d/%Y %H:%i:%s'),'{GetLen(File)}', @MD5);"
+        Dim Str2 As String = $"INSERT INTO `vbnet`.`Files`(`Folder`,`FileName`,`Date`,`Length`,`MD5`)VALUES('{DirName}',""{FileName}"",STR_TO_DATE('{Now.ToString("MM/dd/yyyy hh:mm:ss")}','%m/%d/%Y %H:%i:%s'),'{GetLen(File)}', @MD5);"
         Console.WriteLine(Str2)
         Try
             Dim CMD2 As New MySqlCommand(Str2.Replace("\", "\\"), CN)
@@ -216,7 +251,7 @@
     End Sub
 
     Sub WriteError(Name As String, Message As String)
-        Dim CmdString As String = $"INSERT INTO `vbnet`.`FileError`(`CrDate`,`Name`,`Message`)VALUES(STR_TO_DATE('{Now.ToString("MM/dd/yyyy hh:mm:ss")}','%m/%d/%Y %H:%i:%s'),'{Name}','{Message}');"
+        Dim CmdString As String = $"INSERT INTO `vbnet`.`FileError`(`CrDate`,`Name`,`Message`) VALUES (STR_TO_DATE('{Now.ToString("MM/dd/yyyy hh:mm:ss")}','%m/%d/%Y %H:%i:%s'),'{Name}','{Message}');"
         'Debug.Print(CmdString.Replace("\", "\\"))
         Try
             Dim CMD As New MySqlCommand(CmdString.Replace("\", "\\"), CN)
@@ -226,6 +261,36 @@
         End Try
     End Sub
 
+    Function AddLink(Url As String, FromUrl As String) As Integer
+        Dim Str1 As String = $"INSERT INTO `vbnet`.`Links`(`Url`,`FromUrl`) VALUES ('{Url}','{FromUrl}'); select last_insert_id() as Id;"
+        Dim Id As Integer
+        Dim CMD As MySqlCommand
+        'Dim CN1 As New MySqlConnection(ConnectionString)
+        'CN1.Open()
+        Try
+            CMD = New MySqlCommand(Str1, CN)
+            Id = CMD.ExecuteScalar()
+            'CN1.Close()
+            Return Id
+        Catch ex As Exception
+            Console.WriteLine("Duplicate URL " & Url)
+            WriteError("MySQLError ", Str1 & vbCrLf & ex.Message)
+        End Try
+    End Function
 
+    Sub SetLinkCode(Id As Integer, Code As Integer, Len As Integer)
+        Dim Str1 As String = $"UPDATE `vbnet`.`Links` SET `Code` = {Code}, `Len`={Len} WHERE `i` = {Id};"
+        Dim CMD As MySqlCommand
+        'Dim CN1 As New MySqlConnection(ConnectionString)
+        'CN1.Open()
+        Try
+            CMD = New MySqlCommand(Str1, CN)
+            CMD.ExecuteNonQuery()
+            'CN1.Close()
+        Catch ex As Exception
+            Console.WriteLine(Str1 & vbCrLf & ex.Message)
+            WriteError("MySQLError", Str1 & vbCrLf & ex.Message)
+        End Try
+    End Sub
 
 End Module
