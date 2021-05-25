@@ -40,6 +40,9 @@ Partial Module Program
         Console.WriteLine("(13)- Get list of main wrong link")
         Console.WriteLine("(14)- Get repair Insert commands")
         Console.WriteLine("(15)- LinkChecker")
+        Console.WriteLine("(16)- Search String")
+        Console.WriteLine("(17)- Replace String")
+        Console.WriteLine("(18)- Rename index to Index")
 TryAgain:
         Dim Mode As String = Console.ReadLine()
         If IsNumeric(Mode) Then
@@ -107,6 +110,30 @@ ProcessNext:
                     Console.WriteLine("and Message not like '/Standard/%'")
                     Console.WriteLine("and Message not like '%.js'")
                     Console.WriteLine("and Message not like '%.css';")
+                    Console.WriteLine("SELECT * FROM Links")
+                    Console.WriteLine("where code=404 and NotNeed is null")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/VS2010_NET4_TrainingKit/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Windows/Framework2007/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Standard/Rfc/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/AspNet-DocAndSamples-2017%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Dotnet/MSDN/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/VB2015/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Flowers/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Dotnet/Tour5/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Sql/Access/Set.htm'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Elastix/Index.htm'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Dotnet/Relation/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Dotnet/Diagrams/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Hosting/Qmail/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Sql/Sql/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Dotnet/Vb/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Software/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Convert/Xslt/Oper/%'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/My_cisco/Cisco_doc.htm'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/AndroidBook/Index.htm'")
+                    Console.WriteLine("and FromUrl not like 'http://vb-net.com/Freebsd/%'")
+                    Console.WriteLine("and Url not like '%spam@google.com'")
+                    Console.WriteLine("order by FromUrl;")
                 Case 14
                     Console.WriteLine("Get index list (XX-YY) or one line XX:")
                     Dim Ids As String = Console.ReadLine()
@@ -125,6 +152,19 @@ ProcessNext:
                 Case 15
                     CN.Open()
                     LinkCheck("/", "http://vb-net.com")
+                Case 16
+                    Console.WriteLine("Enter search string:")
+                    SearchString(Console.ReadLine(), Nothing)
+                Case 17
+                    'Root = "/var/www/vb-net.com/html/AspNet-DocAndSamples-2017"
+                    Console.WriteLine("Enter search string:")
+                    Dim Str1 As String = Console.ReadLine()
+                    Console.WriteLine("Enter replace string:")
+                    Dim Str2 As String = Console.ReadLine()
+                    SearchString(Str1, Str2)
+                Case 18
+                    Console.WriteLine("Enter directory:")
+                    RenameFiles(Console.ReadLine())
                 Case Else
                     Console.WriteLine("Try again:")
                     GoTo TryAgain

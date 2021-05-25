@@ -65,7 +65,7 @@ Partial Module Program
                     Debug.Print("Link end not found :" & LinkText)
                     WriteError("Link end not found :", LinkText)
                 Else
-                    Dim Pos4 As Integer = InStr(Pos2 + 1, Res1.ToLower, "#", CompareMethod.Text)
+                    Dim Pos4 As Integer = InStr(Pos2 + 1, Res1.ToLower, "#", CompareMethod.Text)  '=<<<<<< bug //todo:repiar
                     If Pos4 > 0 Then
                         'check link like /FreelanceProjects/Index.htm#a7
                         Pos3 = Pos4
