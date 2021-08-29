@@ -43,12 +43,14 @@ Partial Module Program
         Console.WriteLine("(16)- Search String")
         Console.WriteLine("(17)- Replace String")
         Console.WriteLine("(18)- Rename index to Index")
+        Console.WriteLine("(19)- Set title")
+        Console.WriteLine("(20)- Special manual string replace")
 TryAgain:
         Dim Mode As String = Console.ReadLine()
         If IsNumeric(Mode) Then
             Select Case CInt(Mode)
                 Case 1 : CheckNonlowerExtension()
-                Case 2 : TestDbConnction()
+                Case 2 : TestDbConnection()
                 Case 3
                     Console.WriteLine("Are you sure (Y/N):")
                     If Console.ReadLine() = "Y" Then
@@ -165,6 +167,24 @@ ProcessNext:
                 Case 18
                     Console.WriteLine("Enter directory:")
                     RenameFiles(Console.ReadLine())
+                Case 19
+                    Console.WriteLine("Are you sure (Y/N):")
+                    CN.Open()
+                    If Console.ReadLine() = "Y" Then
+                        SetTitle()
+                    End If
+                Case 20
+                    Console.WriteLine("Are you sure (Y/N):")
+                    If Console.ReadLine() = "Y" Then
+                        Dim Str1 = "<BODY>"
+                        Dim Str2 = "<body>" & vbCrLf &
+                        "<!--# include virtual=""/Menu.htm"" -->" & vbCrLf &
+                        "<style>" & vbCrLf &
+                        ".content {margin-left: 75px; display: block; position: absolute; top: 0; bottom: 0; right: 0; left: 0;}" & vbCrLf &
+                        "</style>" & vbCrLf &
+                        "<div class=""content"">" & vbCrLf
+                        SearchString2(Str1, Str2)
+                    End If
                 Case Else
                     Console.WriteLine("Try again:")
                     GoTo TryAgain

@@ -1,6 +1,6 @@
 ﻿Partial Module Program
 
-    Sub TestDbConnction()
+    Sub TestDbConnection()
         Try
             If CN.State <> Data.ConnectionState.Open Then CN.Open()
         Catch ex As Exception
@@ -278,8 +278,8 @@
         End Try
     End Function
 
-    Sub SetLinkCode(Id As Integer, Code As Integer, Len As Integer)
-        Dim Str1 As String = $"UPDATE `vbnet`.`Links` SET `Code` = {Code}, `Len`={Len} WHERE `i` = {Id};"
+    Sub SetLinkCode(Id As Integer, Code As Integer, Len As Integer, Content As String)
+        Dim Str1 As String = $"UPDATE `vbnet`.`Links` SET `Code` = {Code}, `Len`={Len}, Content='{Content}' WHERE `i` = {Id};"
         Dim CMD As MySqlCommand
         'Dim CN1 As New MySqlConnection(ConnectionString)
         'CN1.Open()
@@ -292,5 +292,19 @@
             WriteError("MySQLError", Str1 & vbCrLf & ex.Message)
         End Try
     End Sub
+
+    Sub AddTitle(Page As String, Result As String)
+        Dim Str1 As String = $"INSERT `vbnet`.`Title` (`page`,`result`) VALUES ('{Page}','{Result}');"
+        Dim CMD As MySqlCommand
+        Try
+            CMD = New MySqlCommand(Str1, CN)
+            CMD.ExecuteNonQuery()
+            'CN1.Close()
+        Catch ex As Exception
+            Console.WriteLine(Str1 & vbCrLf & ex.Message)
+            WriteError("MySQLError", Str1 & vbCrLf & ex.Message)
+        End Try
+    End Sub
+
 
 End Module
